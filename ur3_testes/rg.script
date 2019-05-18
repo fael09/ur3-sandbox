@@ -92,7 +92,7 @@ def unnamed():
   	  end
   	  return output
   	end
-  	target_width=target_width+9.2
+  	target_width=target_width+9.8
   	if target_force>40:
   	target_force=40
   	end
@@ -108,9 +108,7 @@ def unnamed():
   	rg_data=floor(target_width)*4
   	rg_data=rg_data+floor(target_force/2)*4*111
   	rg_data=rg_data+32768
-  	if slave:
-  	rg_data=rg_data+16384
-  	end
+
   	bit(rg_data)
   	if depth_compensation:
   	finger_length = 55.0/1000
@@ -249,7 +247,7 @@ def unnamed():
 	socket_send_string(measure_width)
   RG2(20,10,0.0,True,False,False)
 	socket_send_string(measure_width)
-	RG2(89,10,0.0,True,False,False)
+	RG2(90,10,0.0,True,False,False)
 	socket_send_string(measure_width)
 
 
