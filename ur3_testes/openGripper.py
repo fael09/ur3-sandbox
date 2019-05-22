@@ -12,7 +12,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 
 # Read my ur3script program file
-file = open("treste1.script","r")
+file = open("rg.script","r")
 myProgram = file.read()
 
 # Send it to robot through socket

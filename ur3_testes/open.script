@@ -1,0 +1,22 @@
+def driverProg():
+  HOSTNAME = "192.168.1.63"
+  PORT = 5000
+  pi = 3.14159265359
+  socket_open(HOSTNAME, PORT)
+  set_tool_voltage(24)
+  set_digital_out(8,False)
+  socket_send_string("ok")
+  timeout = 0
+  while get_digital_in(9) == True:
+    set_digital_out(8,False)
+    timeout = timeout + 1
+    sleep(0.008)
+    set_digital_out(8,False)
+    if timeout > 50:
+      break
+    end
+    socket_send_string(timeout)
+  end
+  
+end
+

@@ -1,0 +1,63 @@
+  if (get_digital_out(8) == True) and (get_digital_out(9) == True):
+    popup("RG2 has already executed close2()", title="Notice",  warning = False, error = False, blocking=True)
+  else:
+  global grip_detected = False
+  enter_critical
+    set_digital_out(8, True)
+    set_digital_out(9, True)
+  exit_critical
+  timeout = 0
+  while get_digital_in(9) == True:
+    timeout = timeout+1
+    sync()
+    if timeout > 500:
+      break
+    end
+  end
+
+  timeout = 0
+  while get_digital_in(9) == False:
+    timeout = timeout+1
+    sync()
+    if timeout > 500:
+      popup("RG2 is not responding", title="Error",  warning = False, error=True, blocking=True)
+      break
+    end
+  end
+  end
+  global grip_detected = False
+  global lost_grip = False
+  if(True == get_digital_in(8)):
+    grip_detected = True
+  end
+  set_analog_inputrange(2, 1)
+  sync()
+  sync()
+  sync()
+    global measure_width = (floor(((get_analog_in(2)-0.026)*110/2.976)*10))/10
+
+#################################################
+#  This scrips is used for the RG2 gripper and should not be modified
+#################################################
+####################  On Robot  #####################
+#  URPs:    Description
+#    RG2_Template.urp	Simple program for open and close RG2
+#    RG2_SubP.urp	Sub program for adding RG2 to existing program
+#    RG2_Dual.urp	Simple program for dual gripper operation
+
+#  Scripts:   Function equivalent
+#    open.script	open()
+#    close.script	close()
+#    open2.script	open2()
+#    close2.script	close2()
+#    program_RG2.script	-------------
+# All open/close scripts is possible to single step. The functions return "grip_detected"
+
+#  Variabels:	Input for	         Unit		    Unit 
+#    Input:			Output:           
+#      Open	open()	         [mm]	grip_detected	    (True/False)
+#      Close	close()	         [mm]	lost_grip	    (True/False)
+#      Force_	open()/close()            [N]	measure_width  [mm]
+#      Open2	open2()	         [mm]	 
+#      Close2	close2()	         [mm]	 
+#      Force2	open2()/close2()        [N] 

@@ -52,6 +52,8 @@ def unnamed():
   end
   end
   lg_thr = run lost_grip_thread()
+
+
   def RG2(target_width=110, target_force=40, payload=0.0, set_payload=False, depth_compensation=False, slave=False):
   	grip_detected=False
   	if slave:
@@ -80,31 +82,17 @@ def unnamed():
   	    else:
   	      set_digital_out(9,True)
   	    end
-  	    if get_digital_in(8):
-  	      out=1
-  	    end
   	    sync()
   	    set_digital_out(8,False)
   	    sync()
   	    input=input*2
-  	    output=output*2
   	    i=i+1
+			
   	  end
   	  return output
   	end
-  	target_width=target_width+9.8
-  	if target_force>40:
-  	target_force=40
-  	end
-  	if target_force<4:
-  	target_force=4
-  	end
-  	if target_width>110:
-  	target_width=110
-  	end
-  	if target_width<0:
-  	target_width=0
-  	end
+  	target_width=target_width+10
+
   	rg_data=floor(target_width)*4
   	rg_data=rg_data+floor(target_force/2)*4*111
   	rg_data=rg_data+32768
@@ -244,13 +232,31 @@ def unnamed():
   #   Source: RG - On Robot, 1.9.0, OnRobot A/S
   #   Type: RG2
   $ 2 "RG2(40)"
-	socket_send_string(measure_width)
-  RG2(20,10,0.0,True,False,False)
-	socket_send_string(measure_width)
-	RG2(90,10,0.0,True,False,False)
-	socket_send_string(measure_width)
-
-
+   
+  thread ler_garra():
+	  i = 0
+		while i < 10000:
+			a = (get_analog_in(2)-0.026)/2.9760034
+  	  b = a*1.57079633+-0.08726646
+  		c = 5.0+110*sin(b)
+  		lagura = (c*10)/10-9.2
+			socket_send_string(lagura)
+			sleep(0.008)
+			i = i + 1
+		end
+	end
+	i  = 0
+	thrd_grip = run ler_garra()
+	while i < 5:
+		RG2(0,4,0.0,True,False,False)
+		RG2(10,4,0.0,True,False,False)
+		RG2(20,4,0.0,True,False,False)
+		RG2(40,4,0.0,True,False,False)
+		RG2(80,4,0.0,True,False,False)
+		RG2(100,4,0.0,True,False,False)
+		i  = i + 1
+	end
+	
   # end: URCap Program Node
   #end
 end
