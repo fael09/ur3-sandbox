@@ -10,9 +10,11 @@ def unnamed():
   set_tcp(p[0.0,0.0,0.0,0.0,0.0,0.0])
   set_payload(0.0)
   set_gravity([0.0, 0.0, 9.82])
+  MSG_OUT = 1
   # begin: URCap Installation Node
   #   Source: RG - On Robot, 1.9.0, OnRobot A/S
   #   Type: RG Configuration
+  global el = 0.00
   global measure_width=0
   global grip_detected=False
   global lost_grip=False
@@ -222,10 +224,11 @@ def unnamed():
   end
   set_tool_voltage(24)
   set_tcp(p[0,-0,0.18659,0,-0,0])
-	  HOSTNAME = "192.168.1.63"
-    PORT = 5000
-    pi = 3.14159265359
-		socket_open(HOSTNAME, PORT)
+  HOSTNAME = "192.168.1.63"
+  PORT = 5000
+  pi = 3.14159265359
+  socket_open(HOSTNAME, PORT)
+  
   # end: URCap Installation Node
   $ 1 "Robot Program"
   # begin: URCap Program Node
@@ -233,29 +236,37 @@ def unnamed():
   #   Type: RG2
   $ 2 "RG2(40)"
    
-  thread ler_garra():
+    thread ler_garra():
 	  i = 0
-		while i < 10000:
+		while True:
 			a = (get_analog_in(2)-0.026)/2.9760034
-  	  b = a*1.57079633+-0.08726646
-  		c = 5.0+110*sin(b)
-  		lagura = (c*10)/10-9.2
-			socket_send_string(lagura)
+  	  		b = a*1.57079633+-0.08726646
+  			c = 5.0+110*sin(b)
+  			largura = (c*10)/10-9.2
+			v = get_actual_joint_speeds()
+			vel  = v[5]*1000000
+			socket_send_int(vel)			
 			sleep(0.008)
 			i = i + 1
+			raf = socket_read_binary_integer(1)
+			el = raf[1]
+			el = el/1000000.00
+
 		end
 	end
-	i  = 0
+	
 	thrd_grip = run ler_garra()
-	while i < 5:
-		RG2(0,4,0.0,True,False,False)
-		RG2(10,4,0.0,True,False,False)
-		RG2(20,4,0.0,True,False,False)
-		RG2(40,4,0.0,True,False,False)
-		RG2(80,4,0.0,True,False,False)
-		RG2(100,4,0.0,True,False,False)
-		i  = i + 1
+	c  = 1
+	while c < 12500:
+		speedj([0,0,0,0,0,el], 1, 0.001) 
+		c = c + 1
 	end
+	speedj([0,0,0,0,0,0], 0.5, 5)
+
+	########################################################
+	#RG2(0,4,0.0,True,False,False)                         #
+	# Tem que ser feito uma thread para a abertura da garra#
+	########################################################
 	
   # end: URCap Program Node
   #end

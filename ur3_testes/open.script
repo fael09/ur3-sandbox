@@ -1,22 +1,93 @@
-def driverProg():
+def myProg():
   HOSTNAME = "192.168.1.63"
   PORT = 5000
   pi = 3.14159265359
   socket_open(HOSTNAME, PORT)
+  #input data
+  force0 = 5
+  width0 = 0
+  force1 = 5
+  width1 = 1100
+  force2 = 40
+  width2 = 0
+  force3 = 40
+  width3 = 1100
+  #Turn off supply voltage
+  set_tool_voltage(0)
+  #Wait for discharge
+  sleep(2.0)
+  set_digital_out(8, False)
+  set_digital_out(9, False)
+  #Turn on supply voltage
   set_tool_voltage(24)
-  set_digital_out(8,False)
-  socket_send_string("ok")
+  sleep(0.1)
+  #Wait for RG2 ready
   timeout = 0
-  while get_digital_in(9) == True:
-    set_digital_out(8,False)
-    timeout = timeout + 1
+  
+  while get_digital_in(9):
+    timeout = timeout+1
     sleep(0.008)
-    set_digital_out(8,False)
-    if timeout > 50:
+    if timeout > 250:
       break
     end
-    socket_send_string(timeout)
   end
+  #function for transfer one byte
   
-end
+  def spi_master(input):
+    local i = 0
+    local output =0
+    while i < 8:
+      
+      set_digital_out(8, True)
+      if input >= 128:
+        set_digital_out(9, False)
+        input = input - 128
+      else:
+        set_digital_out(9, True)
+      end
+      input = input * 2
+      output = output*2
+      if get_digital_in(8):
+        output = output+1
+      end
+      sleep(0.008)
+      set_digital_out(8, False)
+      sleep(0.008)
+      i = i + 1
+    end
+    return output
+  end
+  #Transfer data
+  socket_send_string(timeout)
+  if timeout < 252:
+    version_number = 0
+    length_ = 15
+    spi_master(version_number)
+    spi_master(length_)
+    spi_master(force0)
+    spi_master(width0 - (floor(width0/256)*256))
+    spi_master(floor(width0/256))
+    spi_master(force1)
+    spi_master(width1 - (floor(width1/256)*256))
+    spi_master(floor(width1/256))
+    spi_master(force2)
+    spi_master(width2 - (floor(width2/256)*256))
+    spi_master(floor(width2/256))
+    spi_master(force3)
+    spi_master(width3 - (floor(width3/256)*256))
+    spi_master(floor(width3/256))
+    spi_master(84)  
+  end
+  #Wait for RG2 ready
+  while get_digital_in(9) == False:
+    timeout = timeout+1
+    sleep(0.008)
+    if timeout > 250:
+      break
+    end
+  end
+
+end 
+  
+
 
