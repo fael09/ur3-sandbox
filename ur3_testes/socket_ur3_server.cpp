@@ -16,13 +16,13 @@
 #include <stdlib.h>
 #include <sstream>
 #include <inttypes.h>
-#include "teste_soma.h"
+#include "open_socket.h"
 #define PORT 5000
 #include <thread> 
 using namespace std;
 
-//char c = 'w';
-//float velthead = 0;
+char c = 'w';
+float velthead = 0;
 
 /// little endian <-> big endian ///////
 int converter(int32_t num){
@@ -37,73 +37,17 @@ int converter(int32_t num){
 }
 ///////////////////////////////////////
 
-//// thread paera testar o código ////
-/*void muda_vel(){
-	system("/bin/stty raw");
-    while ((c = getchar()) != 'p'){
-		
-		if(c == 'a'){
-			velthead = velthead + 0.1;
-			c = 'w';
-		}
-		if(c == 'd'){
-			velthead = velthead - 0.1;
-			c = 'w';
-		}
-		
-	}
-	system("/bin/stty clocked");
-	
-} */
-/////////////////////////////////////
-
-
-
-int main(){ 
-	int server_fd, new_socket, valread; 
-	struct sockaddr_in address; 
-	int opt = 1; 
-	int addrlen = sizeof(address); 
-	//char *hello = "Hello from server"; 
-	// criação da  thread  e sincronização//
-	//thread t1(muda_vel); 
-	//t1.join();	
-	///////////////////////////////////////
-
-	// Creating socket file descriptor 
-	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){ 
-		perror("socket failed"); 
-		exit(EXIT_FAILURE); 
-	} 
-	
-	// Forcefully attaching socket to the port 8080 
-	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))){ 
-		perror("setsockopt"); 
-		exit(EXIT_FAILURE); 
-	} 
-	address.sin_family = AF_INET; 
-	address.sin_addr.s_addr = INADDR_ANY; 
-	address.sin_port = htons( PORT ); 
-
-	// Forcefully attaching socket to the port 8080 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address))<0){ 
-		perror("bind failed"); 
-		exit(EXIT_FAILURE); 
-	}
-
-	if (listen(server_fd, 3) < 0){ 
-		perror("listen"); 
-		exit(EXIT_FAILURE); 
-	} 
-	if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0){ 
-		perror("accept"); 
-		exit(EXIT_FAILURE); 
-	}
+int main(){ 	
     ///////////////////////
+	//thread t1(muda_vel); 
+	//t1.join();
+	int new_socket;
+	// abrindo a comunicaçção tcp socket
+	new_socket = open_socket();
+	////////////////////////////////////
 	// Declaração dos buffers de entrada e saida 
     int32_t buffer_in  = 0;
 	int8_t buffer_out[4]; 
-
    	/////////////////////////////
 	// criação de um arquivo .csv para armazenar os dados
 	FILE *fp;
@@ -124,7 +68,7 @@ int main(){
 		buffer_in = (int)(velthead*norma_float);
 		buffer_in = converter(buffer_in);
 		send(new_socket, &buffer_in, sizeof buffer_in, 0);
-    	valread = recv(new_socket, &buffer_out, sizeof buffer_out, 0);
+    	recv(new_socket, &buffer_out, sizeof buffer_out, 0);
 		memcpy(&vel_int64, &buffer_out[0], sizeof(int64_t));
 		vel_int32 = converter(vel_int64);
 		vel_float = ((double)vel_int32)/norma_float;
