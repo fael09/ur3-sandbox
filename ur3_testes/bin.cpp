@@ -13,29 +13,22 @@
 #include <stdlib.h>
 #include <sstream>
 #include <stdio.h>
-#include <pthread.h>
-float velthead  = 0;
-void * muda_vel(void *arg){
-	char c = 'a';
-	if(c == 'a'){
-		velthead = velthead + 0.01;
-	}
-	if(c == 'd'){
-		velthead = velthead - 0.01;
-	}
-}
+
 
 int main(){
-
-    pthread_t t1;
-	int a1 = 1;
-	pthread_create(&t1, NULL, muda_vel,(void *)(&a1));
-    pthread_join(t1, NULL);
+char c ;
 while (1)
 {
-    printf("%f\n", velthead);
+	c = getchar();
+	getchar(); 
+	getchar(); 
 
+	//getchar();
+	printf("%c",c);
 }
+
+
+
 
 return 0;
 }
