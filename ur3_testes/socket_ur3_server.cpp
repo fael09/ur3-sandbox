@@ -1,24 +1,23 @@
 // Programa para teste na junta 5 do ur3////////////////////////////////
-// compilar : g++ -std=c++11 socket_ur3_server.cpp -o server -lpthread//
+// compilar : g++ open_socket.cpp socket_ur3_server.cpp -o server///////
 ////////////////////////////////////////////////////////////////////////
 #include <X11/keysymdef.h>
 #include <sys/socket.h>
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <iostream>
-#include <stdio.h>   /* Standard input/output definitions */
-#include <string.h>  /* String function definitions */
-#include <unistd.h>  /* UNIX standard function definitions */
-#include <fcntl.h>   /* File control definitions */
-#include <errno.h>   /* Error number definitions */
-#include <termios.h> /* POSIX terminal control definitions */
+#include <stdio.h>   
+#include <string.h> 
+#include <unistd.h>  
+#include <fcntl.h>   
+#include <errno.h>   
+#include <termios.h> 
 #include <string> 
 #include <stdlib.h>
 #include <sstream>
 #include <inttypes.h>
 #include "open_socket.h"
 #define PORT 5000
-#include <thread> 
 using namespace std;
 
 char c = 'w';
@@ -38,9 +37,6 @@ int converter(int32_t num){
 ///////////////////////////////////////
 
 int main(){ 	
-    ///////////////////////
-	//thread t1(muda_vel); 
-	//t1.join();
 	int new_socket;
 	// abrindo a comunicaçção tcp socket
 	new_socket = open_socket();
@@ -61,9 +57,9 @@ int main(){
 	float norma_float = 1000000.0;
 	float vel_var = 0;
 	float sinal = 1;
-	 
 	///////////////////////
-	//////////////////////////fffffff6
+
+	///////////////////////
     while (1){
 		buffer_in = (int)(velthead*norma_float);
 		buffer_in = converter(buffer_in);
@@ -74,9 +70,7 @@ int main(){
 		vel_float = ((double)vel_int32)/norma_float;
 		fprintf(fp, "\n%f, %f", tempo, vel_float);
 		printf("ref = %f  saida = %f \n", velthead, vel_float);
-		tempo = tempo + 0.008;
-		//printf("\n%i",soma(1,2)); 
-	
+		tempo = tempo + 0.008;	
 	}
 	fclose(fp);
 	return 0;
