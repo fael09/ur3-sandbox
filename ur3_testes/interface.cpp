@@ -16,11 +16,14 @@
 #include <stdlib.h>
 #include <sstream>
 #include <inttypes.h>
+#include <math.h>
 #include "open_socket.h"
+#include "send_script.h"
+
 #define PORT 5000
+#define PI 3.1415
 using namespace std;
 
-char c = 'w';
 float velthead = 0;
 
 /// little endian <-> big endian ///////
@@ -36,7 +39,11 @@ int converter(int32_t num){
 }
 ///////////////////////////////////////
 
-int main(){ 	
+int main(){ 
+	// primeira coisa:
+	// tem que enviar o arquivo urscript
+	send_script(); // a função send_script envia o arquivo para o robô
+	///////////////////////////////////
 	int new_socket;
 	// abrindo a comunicaçção tcp socket
 	new_socket = open_socket();
@@ -55,12 +62,12 @@ int main(){
 	int64_t vel_int64 = 0;
 	int32_t vel_int32 = 0;
 	float norma_float = 1000000.0;
-	float vel_var = 0;
-	float sinal = 1;
+	int conta = 0;
 	///////////////////////
 
 	///////////////////////
     while (1){
+		velthead = sin ((conta*PI)/180);
 		buffer_in = (int)(velthead*norma_float);
 		buffer_in = converter(buffer_in);
 		send(new_socket, &buffer_in, sizeof buffer_in, 0);
@@ -70,7 +77,9 @@ int main(){
 		vel_float = ((double)vel_int32)/norma_float;
 		fprintf(fp, "\n%f, %f", tempo, vel_float);
 		printf("ref = %f  saida = %f \n", velthead, vel_float);
-		tempo = tempo + 0.008;	
+		tempo = tempo + 0.008;
+		conta = conta + 1;
+			
 	}
 	fclose(fp);
 	return 0;

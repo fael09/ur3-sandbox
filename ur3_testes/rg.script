@@ -257,8 +257,8 @@ def unnamed():
 	
 	thrd_grip = run ler_garra()
 	c  = 1
-	while c < 100000:
-		speedj([0,0,0,0,0,1], 1, 0.001) 
+	while c < 10000:
+		speedj([0,0,0,0,0,el], 1, 0.001) 
 		c = c + 1
 	end
 	speedj([0,0,0,0,0,0], 0.5, 5)
